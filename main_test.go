@@ -6,7 +6,7 @@ import (
 	"github.com/rs/xid"
 	"github.com/stretchr/testify/assert"
 	. "gitlab.com/jeelabs/learnings/go-crud"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -23,7 +23,7 @@ func TestHandler(t *testing.T) {
 		writer := httptest.NewRecorder()
 		router.ServeHTTP(writer, request)
 
-		responseData, _ := ioutil.ReadAll(writer.Body)
+		responseData, _ := io.ReadAll(writer.Body)
 
 		assert.Equal(t, mockResponse, string(responseData))
 		assert.Equal(t, http.StatusOK, writer.Code)

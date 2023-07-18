@@ -8,7 +8,6 @@ import (
 
 func WelcomeHandler(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "welcome to simple go crud"})
-
 }
 
 func GetCompanies(ctx *gin.Context) {
@@ -81,10 +80,10 @@ func DeleteCompany(ctx *gin.Context) {
 func main() {
 	router := SetUpRouter()
 	router.GET("/", WelcomeHandler)
-	router.GET("/Companies", GetCompanies)
-	router.POST("/Companies", CreateCompany)
-	router.PUT("/Companies/:id", UpdateCompany)
-	router.DELETE("/Companies/:id", DeleteCompany)
+	router.GET("/companies", GetCompanies)
+	router.POST("/companies", CreateCompany)
+	router.PUT("/companies/:id", UpdateCompany)
+	router.DELETE("/companies/:id", DeleteCompany)
 	err := router.Run()
 	if err != nil {
 		panic(err)
