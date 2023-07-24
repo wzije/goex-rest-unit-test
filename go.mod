@@ -1,4 +1,4 @@
-module gitlab.com/jeelabs/learnings/go-crud
+module gitlab.com/jeelabs/learnings/goex-rest-unit-test
 
 go 1.18
 

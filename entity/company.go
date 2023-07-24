@@ -1,4 +1,4 @@
-package main
+package entity
 
 type Company struct {
 	ID      string `json:"id,omitempty"`
@@ -8,7 +8,6 @@ type Company struct {
 }
 
 // data
-
 var Companies = []Company{
 	{ID: "1", Name: "DELL", CEO: "CEO DELL", Revenue: "1000"},
 	{ID: "2", Name: "LENOVO", CEO: "CEO LONOVO", Revenue: "900"},
