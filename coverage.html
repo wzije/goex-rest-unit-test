@@ -1,0 +1,516 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>handler: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">gitlab.com/jeelabs/learnings/goex-rest-unit-test/handler/company_handler.go (65.8%)</option>
+				
+				<option value="file1">gitlab.com/jeelabs/learnings/goex-rest-unit-test/repository/company_repositary_mock.go (0.0%)</option>
+				
+				<option value="file2">gitlab.com/jeelabs/learnings/goex-rest-unit-test/repository/company_repository.go (96.7%)</option>
+				
+				<option value="file3">gitlab.com/jeelabs/learnings/goex-rest-unit-test/service/company_service.go (93.8%)</option>
+				
+				<option value="file4">gitlab.com/jeelabs/learnings/goex-rest-unit-test/service/company_service_mock.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package handler
+
+import (
+        "github.com/gin-gonic/gin"
+        "github.com/rs/xid"
+        . "gitlab.com/jeelabs/learnings/goex-rest-unit-test/entity"
+        "gitlab.com/jeelabs/learnings/goex-rest-unit-test/helper"
+        "gitlab.com/jeelabs/learnings/goex-rest-unit-test/service"
+        "net/http"
+)
+
+type CompanyHandler interface {
+        Get(ctx *gin.Context)
+        ById(ctx *gin.Context)
+        Add(ctx *gin.Context)
+        Update(ctx *gin.Context)
+        Delete(ctx *gin.Context)
+}
+
+type companyHandler struct {
+        service service.CompanyService
+}
+
+func (c *companyHandler) Get(ctx *gin.Context) <span class="cov8" title="1">{
+
+        result, err := c.service.Get()
+
+        if err != nil </span><span class="cov0" title="0">{
+                ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">ctx.JSON(http.StatusOK, helper.BodyResponse{
+                Code:    http.StatusOK,
+                Message: "Success",
+                Data:    &amp;result,
+        })</span>
+}
+
+func (c *companyHandler) ById(ctx *gin.Context) <span class="cov8" title="1">{
+        id := ctx.Param("id")
+
+        result, err := c.service.ById(id)
+
+        if err != nil </span><span class="cov8" title="1">{
+                ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+        }</span>
+
+        <span class="cov8" title="1">ctx.JSON(http.StatusOK, helper.BodyResponse{
+                Code:    http.StatusOK,
+                Message: "Success",
+                Data:    &amp;result,
+        })</span>
+
+}
+
+func (c *companyHandler) Add(ctx *gin.Context) <span class="cov8" title="1">{
+        var newCompany Company
+
+        if err := ctx.ShouldBindJSON(&amp;newCompany); err != nil </span><span class="cov0" title="0">{
+                ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">if newCompany.ID == "" </span><span class="cov0" title="0">{
+                newCompany.ID = xid.New().String()
+        }</span>
+
+        <span class="cov8" title="1">result, err := c.service.Add(newCompany)
+
+        if err != nil </span><span class="cov0" title="0">{
+                ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">ctx.JSON(http.StatusCreated, helper.BodyResponse{
+                Code:    http.StatusCreated,
+                Message: "Success Add",
+                Data:    &amp;result,
+        })</span>
+}
+
+func (c *companyHandler) Update(ctx *gin.Context) <span class="cov8" title="1">{
+        id := ctx.Param("id")
+
+        var company Company
+        if err := ctx.ShouldBindJSON(&amp;company); err != nil </span><span class="cov0" title="0">{
+                ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">result, err := c.service.Update(id, company)
+
+        if err != nil </span><span class="cov0" title="0">{
+                ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">ctx.JSON(http.StatusCreated, helper.BodyResponse{
+                Code:    http.StatusCreated,
+                Message: "Success Update",
+                Data:    &amp;result,
+        })</span>
+}
+
+func (c *companyHandler) Delete(ctx *gin.Context) <span class="cov8" title="1">{
+        id := ctx.Param("id")
+
+        err := c.service.Delete(id)
+
+        if err != nil </span><span class="cov0" title="0">{
+                ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+                return
+        }</span>
+
+        <span class="cov8" title="1">ctx.JSON(http.StatusOK, helper.BodyResponse{
+                Code:    http.StatusOK,
+                Message: "Success delete",
+        })</span>
+}
+
+func NewCompanyHandler(service service.CompanyService) CompanyHandler <span class="cov8" title="1">{
+        return &amp;companyHandler{service: service}
+}</span>
+
+//func CompanyRouter(router *gin.Engine) {
+//        h := NewCompanyHandler(service.NewCompanyService(repository.NewCompanyRepository()))
+//        router.GET("/companies", h.Get)
+//        router.GET("/companies/:id", h.ById)
+//        router.POST("/companies", h.Add)
+//        router.PUT("/companies/:id", h.Update)
+//        router.DELETE("/companies/:id", h.Delete)
+//}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package repository
+
+import (
+        "github.com/stretchr/testify/mock"
+        "gitlab.com/jeelabs/learnings/goex-rest-unit-test/entity"
+)
+
+type CompanyRepositoryMock struct {
+        Mock mock.Mock
+}
+
+func (m *CompanyRepositoryMock) Get() *[]entity.Company <span class="cov0" title="0">{
+        args := m.Mock.Called()
+        return args.Get(0).(*[]entity.Company)
+}</span>
+
+func (m *CompanyRepositoryMock) ById(id string) (*entity.Company, error) <span class="cov0" title="0">{
+        args := m.Mock.Called(id)
+        return args.Get(0).(*entity.Company), args.Error(1)
+}</span>
+
+func (m *CompanyRepositoryMock) Add(company entity.Company) (*entity.Company, error) <span class="cov0" title="0">{
+        args := m.Mock.Called(company)
+        //comp := args.Get(0).(entity.Company)
+
+        if args.Get(0) == nil </span><span class="cov0" title="0">{
+                return nil, args.Error(1)
+        }</span> else<span class="cov0" title="0"> {
+                return args.Get(0).(*entity.Company), nil
+        }</span>
+}
+
+func (m *CompanyRepositoryMock) Update(id string, company entity.Company) (*entity.Company, error) <span class="cov0" title="0">{
+        args := m.Mock.Called(id, company)
+        if args.Get(0) == nil </span><span class="cov0" title="0">{
+                return nil, args.Error(1)
+        }</span> else<span class="cov0" title="0"> {
+                return args.Get(0).(*entity.Company), nil
+        }</span>
+}
+
+func (m *CompanyRepositoryMock) Delete(id string) error <span class="cov0" title="0">{
+        args := m.Mock.Called(id)
+        if args.Get(0) == nil </span><span class="cov0" title="0">{
+                return nil
+        }</span> else<span class="cov0" title="0"> {
+                return args.Error(0)
+        }</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package repository
+
+import (
+        "errors"
+        "gitlab.com/jeelabs/learnings/goex-rest-unit-test/entity"
+)
+
+type CompanyRepository interface {
+        Get() *[]entity.Company
+        ById(id string) (*entity.Company, error)
+        Add(company entity.Company) (*entity.Company, error)
+        Update(id string, company entity.Company) (*entity.Company, error)
+        Delete(id string) error
+}
+
+type companyRepository struct {
+}
+
+func (c companyRepository) Get() *[]entity.Company <span class="cov8" title="1">{
+        return &amp;entity.Companies
+}</span>
+
+func (c companyRepository) ById(id string) (*entity.Company, error) <span class="cov8" title="1">{
+        index := -1
+
+        for i, v := range entity.Companies </span><span class="cov8" title="1">{
+                if v.ID == id </span><span class="cov8" title="1">{
+                        index = i
+                }</span>
+        }
+
+        <span class="cov8" title="1">if index == -1 </span><span class="cov8" title="1">{
+                return nil, errors.New("data not found")
+        }</span>
+
+        <span class="cov8" title="1">return &amp;entity.Companies[index], nil</span>
+}
+
+func (c companyRepository) Add(company entity.Company) (*entity.Company, error) <span class="cov8" title="1">{
+        entity.Companies = append(entity.Companies, company)
+        return &amp;company, nil
+}</span>
+
+func (c companyRepository) Update(id string, company entity.Company) (*entity.Company, error) <span class="cov8" title="1">{
+        index := -1
+
+        for i, v := range entity.Companies </span><span class="cov8" title="1">{
+                if v.ID == id </span><span class="cov8" title="1">{
+                        index = i
+                }</span>
+        }
+
+        <span class="cov8" title="1">if index == -1 </span><span class="cov8" title="1">{
+                return nil, errors.New("data not found")
+        }</span>
+
+        <span class="cov8" title="1">comp := entity.Companies[index]
+        comp.Name = company.Name
+        comp.CEO = company.CEO
+        comp.Revenue = company.Revenue
+
+        return &amp;comp, nil</span>
+}
+
+func (c companyRepository) Delete(id string) error <span class="cov8" title="1">{
+        index := -1
+
+        for i, v := range entity.Companies </span><span class="cov8" title="1">{
+                if v.ID == id </span><span class="cov8" title="1">{
+                        index = i
+                }</span>
+        }
+
+        <span class="cov8" title="1">if index == -1 </span><span class="cov0" title="0">{
+                return errors.New("data not found")
+        }</span>
+
+        <span class="cov8" title="1">entity.Companies = append(entity.Companies[:index], entity.Companies[index+1:]...)
+
+        return nil</span>
+}
+
+func NewCompanyRepository() CompanyRepository <span class="cov8" title="1">{
+        return companyRepository{}
+}</span>
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package service
+
+import (
+        "errors"
+        "gitlab.com/jeelabs/learnings/goex-rest-unit-test/entity"
+        "gitlab.com/jeelabs/learnings/goex-rest-unit-test/repository"
+)
+
+type CompanyService interface {
+        Get() (*[]entity.Company, error)
+        ById(id string) (*entity.Company, error)
+        Add(company entity.Company) (*entity.Company, error)
+        Update(id string, company entity.Company) (*entity.Company, error)
+        Delete(id string) error
+}
+
+type companyService struct {
+        repository repository.CompanyRepository
+}
+
+func (c companyService) Get() (*[]entity.Company, error) <span class="cov8" title="1">{
+        companies := c.repository.Get()
+        if companies == nil </span><span class="cov0" title="0">{
+                return nil, errors.New("data not found")
+        }</span>
+        <span class="cov8" title="1">return companies, nil</span>
+}
+
+func (c companyService) ById(id string) (*entity.Company, error) <span class="cov8" title="1">{
+        company, err := c.repository.ById(id)
+        return company, err
+}</span>
+
+func (c companyService) Add(comp entity.Company) (*entity.Company, error) <span class="cov8" title="1">{
+
+        company, err := c.repository.Add(comp)
+
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+
+        <span class="cov8" title="1">return company, nil</span>
+}
+
+func (c companyService) Update(id string, comp entity.Company) (*entity.Company, error) <span class="cov8" title="1">{
+        company, err := c.repository.Update(id, comp)
+        if err != nil </span><span class="cov8" title="1">{
+                return nil, err
+        }</span>
+        <span class="cov8" title="1">return company, nil</span>
+}
+
+func (c companyService) Delete(id string) error <span class="cov8" title="1">{
+        return c.repository.Delete(id)
+}</span>
+
+func NewCompanyService(companyRepository repository.CompanyRepository) CompanyService <span class="cov8" title="1">{
+        return companyService{repository: companyRepository}
+}</span>
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package service
+
+import (
+        "github.com/stretchr/testify/mock"
+        "gitlab.com/jeelabs/learnings/goex-rest-unit-test/entity"
+)
+
+type CompanyServiceMock struct {
+        Mock mock.Mock
+}
+
+func (c *CompanyServiceMock) Get() (*[]entity.Company, error) <span class="cov0" title="0">{
+        args := c.Mock.Called()
+
+        if args.Get(0) == nil </span><span class="cov0" title="0">{
+                return nil, args.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">result := args.Get(0).([]entity.Company)
+
+        return &amp;result, nil</span>
+}
+
+func (c *CompanyServiceMock) ById(id string) (*entity.Company, error) <span class="cov0" title="0">{
+
+        args := c.Mock.Called(id)
+
+        if id == "" </span><span class="cov0" title="0">{
+                return nil, args.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">if args.Get(0) == nil </span><span class="cov0" title="0">{
+                return nil, args.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">data := args.Get(0).(entity.Company)
+
+        return &amp;data, nil</span>
+}
+
+func (c *CompanyServiceMock) Add(company entity.Company) (*entity.Company, error) <span class="cov0" title="0">{
+        args := c.Mock.Called(company)
+
+        if args.Get(0) == nil </span><span class="cov0" title="0">{
+                return nil, args.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">data := args.Get(0).(entity.Company)
+
+        return &amp;data, nil</span>
+}
+
+func (c *CompanyServiceMock) Update(id string, company entity.Company) (*entity.Company, error) <span class="cov0" title="0">{
+        args := c.Mock.Called(id, company)
+
+        if args.Get(0) == nil </span><span class="cov0" title="0">{
+                return nil, args.Error(1)
+        }</span>
+
+        <span class="cov0" title="0">data := args.Get(0).(entity.Company)
+
+        return &amp;data, nil</span>
+}
+
+func (c *CompanyServiceMock) Delete(id string) error <span class="cov0" title="0">{
+        args := c.Mock.Called(id)
+        if args.Get(0) == nil </span><span class="cov0" title="0">{
+                return args.Error(0)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
